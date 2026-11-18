@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alexis Johnson</title>
+<meta name="description" content="Alexis Johnson’s new home on the internet.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1311" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --paper: #ffffff;
+    --ink: #14201a;
+    --plain: #000000;      /* the colour of the old plain-text page */
+    --del-bg: #ffecea;
+    --del-ink: #b3261e;
+    --ins-bg: #dcf5e3;
+    --ins-ink: #11733a;
+
+    --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --serif: "Iowan Old Style", "Sitka Text", Charter, "Georgia Pro", Georgia, "Noto Serif", serif;
+    --display: "Iowan Old Style", "Sitka Banner", "Sitka Display", Charter, "Georgia Pro", Georgia, "Noto Serif", serif;
+
+    --edge: clamp(3rem, 10vw, 9rem);      /* where text starts; the − and + hang just left of it */
+    --top: clamp(4rem, 20vh, 11rem);      /* space above the diff */
+    --del-pad: .6rem;
+    --ins-pad: clamp(.75rem, 2.2vw, 1.5rem);
+    --h1: clamp(2.75rem, 9vw, 7.5rem);
+    --ease: cubic-bezier(.2, .75, .15, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0f1311;
+      --ink: #e6eee8;
+      --plain: #e6eee8;
+      --del-bg: #331816;
+      --del-ink: #ff9b93;
+      --ins-bg: #12341f;
+      --ins-ink: #72db9d;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+  }
+  ::selection { background: var(--ins-bg); color: var(--ink); }
+
+  main { padding-top: var(--top); }
+
+  /* Each line of the diff is a full-width tinted band, like a pull request zoomed way in. */
+  .row {
+    position: relative;
+    isolation: isolate;
+    margin: 0;
+    padding-inline: var(--edge) 1.5rem;
+  }
+  .row::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform-origin: left center;
+  }
+  .mark {
+    position: absolute;
+    right: calc(100% - var(--edge));
+    padding-right: .7em;
+    font-family: var(--mono);
+    user-select: none;
+  }
+
+  .row--del {
+    padding-block: var(--del-pad);
+    font: 1rem/1.5 var(--mono);
+    color: var(--del-ink);
+  }
+  .row--del::before { background: var(--del-bg); }
+  .row--del .mark { top: var(--del-pad); }
+  .row--del del {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    transform-origin: 0 0;
+  }
+  .row--del del::after {          /* the strike-through, drawn on load */
+    content: "";
+    position: absolute;
+    left: -.15em;
+    right: -.15em;
+    top: 54%;
+    border-top: 2px solid currentColor;
+    transform-origin: left center;
+  }
+
+  .row--ins { padding-block: var(--ins-pad); }
+  .row--ins::before { background: var(--ins-bg); }
+  .row--ins .mark {
+    top: var(--ins-pad);
+    color: var(--ins-ink);
+    font-size: calc(var(--h1) * .42);
+    line-height: calc(var(--h1) * 1.04);
+  }
+  h1 {
+    margin: 0;
+    font: 400 var(--h1)/1.04 var(--display);
+    letter-spacing: -.015em;
+  }
+  h1 ins {
+    display: inline-block;
+    text-decoration: none;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: calc(var(--edge) + 34rem);
+    margin: clamp(2rem, 6vh, 3.5rem) 0 5rem;
+    padding-inline: var(--edge) 1.5rem;
+    font-size: clamp(1.125rem, 1rem + .45vw, 1.3125rem);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  /* On load the page starts out looking exactly like the old plain-text
+     "Hello world" in the top-left corner, then the diff plays out. */
+  @media (prefers-reduced-motion: no-preference) {
+    .row--del del         { animation: glide .75s var(--ease) .6s backwards; }
+    .row--del::before     { animation: wipe .5s var(--ease) .9s backwards; }
+    .row--del .mark       { animation: fade .3s ease-out 1.2s backwards; }
+    .row--del del::after  { animation: wipe .35s var(--ease) 1.35s backwards; }
+    .row--ins::before     { animation: wipe .6s var(--ease) 1.5s backwards; }
+    h1 ins                { animation: reveal .85s var(--ease) 1.7s backwards; }
+    .row--ins .mark       { animation: fade .3s ease-out 1.9s backwards; }
+    .lede                 { animation: fade .6s ease-out 2.45s backwards; }
+  }
+  @keyframes glide {
+    from {
+      transform: translate(calc(8px - var(--edge)), calc(8px - var(--top) - var(--del-pad))) scale(.8125);
+      color: var(--plain);
+    }
+  }
+  @keyframes wipe { from { transform: scaleX(0); } }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes reveal {
+    from { clip-path: inset(-.3em 100% -.4em -.1em); }
+    to   { clip-path: inset(-.3em -.1em -.4em -.1em); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="row row--del"><span class="mark" aria-hidden="true">&minus;</span><del>Hello world</del></p>
+  <div class="row row--ins"><span class="mark" aria-hidden="true">+</span><h1><ins>Hello, I’m Alexis.</ins></h1></div>
+  <p class="lede">Until 18 November 2026, this address only said “Hello world” in plain text. Then this page was pushed to GitHub and Cloudflare put it live. More soon.</p>
+</main>
+</body>
+</html>

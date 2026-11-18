@@ -1,0 +1,9 @@
+// Cloudflare Worker that serves this site. On every push to main, Cloudflare
+// runs `npx wrangler deploy`, which uploads ./public as static files.
+{
+  "name": "alexisjohnson-dev",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./public"
+  }
+}
