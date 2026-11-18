@@ -2,162 +2,197 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Alexis Johnson</title>
-<meta name="description" content="Alexis Johnson’s new home on the internet.">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1311" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Alexis Johnson’s little room on the internet. Play a rooftop game on the TV, draw a sprite, make a chiptune loop, pet the cat.">
+<meta name="theme-color" content="#140f1f">
+<meta name="color-scheme" content="dark">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<style>
-  :root {
-    --paper: #ffffff;
-    --ink: #14201a;
-    --plain: #000000;      /* the colour of the old plain-text page */
-    --del-bg: #ffecea;
-    --del-ink: #b3261e;
-    --ins-bg: #dcf5e3;
-    --ins-ink: #11733a;
-
-    --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-    --serif: "Iowan Old Style", "Sitka Text", Charter, "Georgia Pro", Georgia, "Noto Serif", serif;
-    --display: "Iowan Old Style", "Sitka Banner", "Sitka Display", Charter, "Georgia Pro", Georgia, "Noto Serif", serif;
-
-    --edge: clamp(3rem, 10vw, 9rem);      /* where text starts; the − and + hang just left of it */
-    --top: clamp(4rem, 20vh, 11rem);      /* space above the diff */
-    --del-pad: .6rem;
-    --ins-pad: clamp(.75rem, 2.2vw, 1.5rem);
-    --h1: clamp(2.75rem, 9vw, 7.5rem);
-    --ease: cubic-bezier(.2, .75, .15, 1);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #0f1311;
-      --ink: #e6eee8;
-      --plain: #e6eee8;
-      --del-bg: #331816;
-      --del-ink: #ff9b93;
-      --ins-bg: #12341f;
-      --ins-ink: #72db9d;
-    }
-  }
-
-  *, *::before, *::after { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--serif);
-  }
-  ::selection { background: var(--ins-bg); color: var(--ink); }
-
-  main { padding-top: var(--top); }
-
-  /* Each line of the diff is a full-width tinted band, like a pull request zoomed way in. */
-  .row {
-    position: relative;
-    isolation: isolate;
-    margin: 0;
-    padding-inline: var(--edge) 1.5rem;
-  }
-  .row::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    transform-origin: left center;
-  }
-  .mark {
-    position: absolute;
-    right: calc(100% - var(--edge));
-    padding-right: .7em;
-    font-family: var(--mono);
-    user-select: none;
-  }
-
-  .row--del {
-    padding-block: var(--del-pad);
-    font: 1rem/1.5 var(--mono);
-    color: var(--del-ink);
-  }
-  .row--del::before { background: var(--del-bg); }
-  .row--del .mark { top: var(--del-pad); }
-  .row--del del {
-    position: relative;
-    display: inline-block;
-    text-decoration: none;
-    transform-origin: 0 0;
-  }
-  .row--del del::after {          /* the strike-through, drawn on load */
-    content: "";
-    position: absolute;
-    left: -.15em;
-    right: -.15em;
-    top: 54%;
-    border-top: 2px solid currentColor;
-    transform-origin: left center;
-  }
-
-  .row--ins { padding-block: var(--ins-pad); }
-  .row--ins::before { background: var(--ins-bg); }
-  .row--ins .mark {
-    top: var(--ins-pad);
-    color: var(--ins-ink);
-    font-size: calc(var(--h1) * .42);
-    line-height: calc(var(--h1) * 1.04);
-  }
-  h1 {
-    margin: 0;
-    font: 400 var(--h1)/1.04 var(--display);
-    letter-spacing: -.015em;
-  }
-  h1 ins {
-    display: inline-block;
-    text-decoration: none;
-    text-wrap: balance;
-  }
-
-  .lede {
-    max-width: calc(var(--edge) + 34rem);
-    margin: clamp(2rem, 6vh, 3.5rem) 0 5rem;
-    padding-inline: var(--edge) 1.5rem;
-    font-size: clamp(1.125rem, 1rem + .45vw, 1.3125rem);
-    line-height: 1.6;
-    text-wrap: pretty;
-  }
-
-  /* On load the page starts out looking exactly like the old plain-text
-     "Hello world" in the top-left corner, then the diff plays out. */
-  @media (prefers-reduced-motion: no-preference) {
-    .row--del del         { animation: glide .75s var(--ease) .6s backwards; }
-    .row--del::before     { animation: wipe .5s var(--ease) .9s backwards; }
-    .row--del .mark       { animation: fade .3s ease-out 1.2s backwards; }
-    .row--del del::after  { animation: wipe .35s var(--ease) 1.35s backwards; }
-    .row--ins::before     { animation: wipe .6s var(--ease) 1.5s backwards; }
-    h1 ins                { animation: reveal .85s var(--ease) 1.7s backwards; }
-    .row--ins .mark       { animation: fade .3s ease-out 1.9s backwards; }
-    .lede                 { animation: fade .6s ease-out 2.45s backwards; }
-  }
-  @keyframes glide {
-    from {
-      transform: translate(calc(8px - var(--edge)), calc(8px - var(--top) - var(--del-pad))) scale(.8125);
-      color: var(--plain);
-    }
-  }
-  @keyframes wipe { from { transform: scaleX(0); } }
-  @keyframes fade { from { opacity: 0; } }
-  @keyframes reveal {
-    from { clip-path: inset(-.3em 100% -.4em -.1em); }
-    to   { clip-path: inset(-.3em -.1em -.4em -.1em); }
-  }
-</style>
+<link rel="preload" href="/fonts/dotgothic16-subset.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css">
+<script type="module" src="/js/main.js"></script>
 </head>
 <body>
-<main>
-  <p class="row row--del"><span class="mark" aria-hidden="true">&minus;</span><del>Hello world</del></p>
-  <div class="row row--ins"><span class="mark" aria-hidden="true">+</span><h1><ins>Hello, I’m Alexis.</ins></h1></div>
-  <p class="lede">Until 18 November 2026, this address only said “Hello world” in plain text. Then this page was pushed to GitHub and Cloudflare put it live. More soon.</p>
-</main>
+  <header class="topbar">
+    <a class="sitename" href="/">alexisjohnson.dev</a>
+    <div class="topbar-actions">
+      <button type="button" id="btn-sound">Sound on</button>
+      <button type="button" id="btn-menu">Menu</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1 class="sr-only">Alexis Johnson’s room</h1>
+
+    <div class="frame" id="frame">
+      <canvas id="screen" width="320" height="180" tabindex="0" aria-label="A small pixel-art room with a door, a desk with a computer, a lamp, a couch under a window, a boombox, a TV and a bookshelf. A cat lives here. Use the arrow keys to walk and the up arrow to use things, or pick something from the list below the screen."></canvas>
+      <div class="scanlines" aria-hidden="true"></div>
+
+      <div class="prompt" id="prompt" hidden></div>
+      <div class="say" id="say" hidden aria-hidden="true"></div>
+
+      <div class="title-ui" id="title-ui" hidden>
+        <p class="title-sub">a little room on the internet</p>
+        <button type="button" class="start" id="btn-start">Press start</button>
+        <p class="title-save" id="title-save"></p>
+        <p class="title-copy">© 2026 Alexis Johnson</p>
+      </div>
+
+      <div class="game-ui" id="game-ui" hidden>
+        <div class="hud">
+          <button type="button" class="hud-exit" id="game-exit">✕ Room</button>
+          <span id="hud-score">DEMO</span>
+          <span id="hud-best">HI 01500</span>
+        </div>
+        <div class="game-msg" id="game-msg"></div>
+      </div>
+
+      <div class="dialog" id="dialog" hidden>
+        <p class="dialog-text" id="dialog-text" aria-hidden="true"></p>
+        <span class="dialog-more" id="dialog-more" aria-hidden="true">▼</span>
+      </div>
+
+      <div class="toasts" id="toasts"></div>
+    </div>
+
+    <div class="pad" id="pad" hidden>
+      <div class="pad-group">
+        <button type="button" data-act="left" aria-label="Walk left">◀</button>
+        <button type="button" data-act="right" aria-label="Walk right">▶</button>
+      </div>
+      <div class="pad-group">
+        <button type="button" data-act="jump" aria-label="Jump">B</button>
+        <button type="button" data-act="use" aria-label="Use">A</button>
+      </div>
+    </div>
+
+    <p class="keys" id="keys">
+      <span><kbd>←</kbd><kbd>→</kbd> walk</span>
+      <span><kbd>Space</kbd> jump</span>
+      <span><kbd>↑</kbd> use</span>
+      <span><kbd>↓</kbd> hop down</span>
+      <span><kbd>Esc</kbd> menu</span>
+    </p>
+
+    <nav class="places" aria-label="Things to do in the room">
+      <button type="button" data-go="board"><span aria-hidden="true">▲</span>Read the note</button>
+      <button type="button" data-go="tv"><span aria-hidden="true">▶</span>Play Rooftop Run</button>
+      <button type="button" data-go="desk"><span aria-hidden="true">■</span>Draw a sprite</button>
+      <button type="button" data-go="boombox"><span aria-hidden="true">♪</span>Make a loop</button>
+      <button type="button" data-go="cat"><span aria-hidden="true">♥</span>Pet the cat</button>
+      <button type="button" data-go="shelf"><span aria-hidden="true">★</span>Trophies</button>
+    </nav>
+
+    <p class="sr-only" id="live" aria-live="polite"></p>
+  </main>
+
+  <footer class="footer">
+    <p>Your save file stays in this browser. No cookies, no tracking.</p>
+    <p>Last rearranged 18 November 2026.</p>
+  </footer>
+
+  <div class="panel-layer" id="panel-layer" hidden>
+    <section class="panel" id="panel-studio" role="dialog" aria-modal="true" aria-labelledby="studio-title" hidden>
+      <header class="panel-head">
+        <h2 id="studio-title">Sprite Studio</h2>
+        <button type="button" class="panel-close" data-close aria-label="Close">✕</button>
+      </header>
+      <div class="studio">
+        <div class="studio-canvas-wrap">
+          <canvas id="studio-canvas" width="16" height="16" tabindex="0" aria-label="Drawing grid, 16 by 16 pixels. Arrow keys move the cursor, Space paints."></canvas>
+          <div class="studio-grid-lines" aria-hidden="true"></div>
+          <div class="studio-cursor" id="studio-cursor" hidden></div>
+        </div>
+        <div class="studio-side">
+          <div class="tools" role="toolbar" aria-label="Tools">
+            <button type="button" data-tool="pen" aria-pressed="true">Pen</button>
+            <button type="button" data-tool="erase" aria-pressed="false">Eraser</button>
+            <button type="button" data-tool="fill" aria-pressed="false">Fill</button>
+            <button type="button" data-tool="pick" aria-pressed="false">Picker</button>
+            <button type="button" id="studio-mirror" aria-pressed="false">Mirror</button>
+            <button type="button" id="studio-undo">Undo</button>
+            <button type="button" id="studio-clear">Clear</button>
+          </div>
+          <div class="swatches" id="studio-swatches" role="radiogroup" aria-label="Colors"></div>
+          <div class="studio-preview">
+            <canvas id="studio-prev1" width="16" height="16" aria-hidden="true"></canvas>
+            <canvas id="studio-prev2" width="16" height="16" aria-hidden="true"></canvas>
+            <span>Real size, and three times bigger</span>
+          </div>
+          <p class="studio-label">Hang it on the wall:</p>
+          <div class="studio-frames" id="studio-frames"></div>
+          <div class="studio-actions">
+            <button type="button" id="studio-download">Download PNG</button>
+            <button type="button" id="studio-share">Copy share link</button>
+          </div>
+          <p class="note" id="studio-note" role="status"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-boombox" role="dialog" aria-modal="true" aria-labelledby="bb-title" hidden>
+      <header class="panel-head">
+        <h2 id="bb-title">Boombox</h2>
+        <button type="button" class="panel-close" data-close aria-label="Close">✕</button>
+      </header>
+      <div class="bb">
+        <p class="bb-intro">Click squares to build a loop. Every note fits with every other one, so there are no wrong answers.</p>
+        <div class="bb-grid" id="bb-grid" role="group" aria-label="Loop, 16 steps"></div>
+        <div class="bb-controls">
+          <button type="button" id="bb-play" class="primary" data-autofocus>▶ Play</button>
+          <label class="bb-tempo" for="bb-tempo">Tempo</label>
+          <input type="range" id="bb-tempo" min="70" max="170" step="2" value="112">
+          <output id="bb-bpm" for="bb-tempo">112</output>
+        </div>
+        <div class="bb-controls">
+          <span>Start from:</span>
+          <button type="button" data-preset="cozy">Cozy</button>
+          <button type="button" data-preset="rooftops">Rooftops</button>
+          <button type="button" data-preset="boss">Boss fight</button>
+          <button type="button" id="bb-clear">Clear</button>
+          <button type="button" id="bb-share">Copy share link</button>
+        </div>
+        <p class="note" id="bb-note" role="status"></p>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-trophies" role="dialog" aria-modal="true" aria-labelledby="tr-title" hidden>
+      <header class="panel-head">
+        <h2 id="tr-title">Trophies</h2>
+        <button type="button" class="panel-close" data-close aria-label="Close">✕</button>
+      </header>
+      <dl class="trophy-stats" id="trophy-stats"></dl>
+      <ul class="trophy-list" id="trophy-list"></ul>
+    </section>
+
+    <section class="panel panel-narrow" id="panel-menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" hidden>
+      <header class="panel-head">
+        <h2 id="menu-title">Menu</h2>
+        <button type="button" class="panel-close" data-close aria-label="Close">✕</button>
+      </header>
+      <div class="menu">
+        <button type="button" id="menu-resume" data-autofocus>Back to the room</button>
+        <button type="button" id="menu-sound">Sound: on</button>
+        <button type="button" id="menu-scan">Scanlines: on</button>
+        <button type="button" id="menu-title">Title screen</button>
+        <h3>Controls</h3>
+        <dl class="controls-list">
+          <dt>← →</dt><dd>Walk</dd>
+          <dt>Space</dt><dd>Jump. Hold it to jump higher.</dd>
+          <dt>↑ or E</dt><dd>Use whatever you're standing next to</dd>
+          <dt>↓</dt><dd>Hop down from furniture</dd>
+          <dt>Esc</dt><dd>Open this menu</dd>
+          <dt>Tap</dt><dd>Walk somewhere, or use the thing you tapped</dd>
+        </dl>
+        <h3>Your save file</h3>
+        <p id="menu-save"></p>
+        <button type="button" id="menu-reset" class="danger">Erase my save file</button>
+        <h3>Credits</h3>
+        <p>Drawn on a canvas, scored with Web Audio, written in plain JavaScript. Pixel font: DotGothic16 by Fontworks, under the SIL Open Font License.</p>
+      </div>
+    </section>
+  </div>
+
+  <noscript><p class="noscript">This room is a little game, so it needs JavaScript to open the door.</p></noscript>
 </body>
 </html>
